@@ -1,0 +1,28 @@
+name: View Disk
+
+on: [push]
+
+jobs:
+  direct:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: cqs21/asterinas
+          ref: main
+          fetch-depth: 1
+      - run: |
+          sudo cp -a /var/lib/docker /mnt
+          sudo mount --bind /mnt/docker /var/lib/docker
+      - uses: kohlerdominik/docker-run-action@v2.0.0
+        with:
+          image: asterinas/asterinas:0.17.0-20251217
+          options: --privileged
+          volumes: |
+            ${{ github.workspace }}:/root/asterinas
+            /dev:/dev
+          run: |
+            df -alh
+            make nixos NIXOS_TEST_COMMAND='hello-asterinas'
+            make run_nixos
+
