@@ -1,0 +1,22 @@
+name: View Disk in Docker
+
+on: [push]
+
+jobs:
+  in-docker:
+    runs-on: ubuntu-latest
+    container:
+      image: cqs21/asterinas:0.17.0-20260114
+      options: --device=/dev/kvm --privileged
+      volumes:
+        # Map the following volumes to the container in order to free disk space.
+        - /usr/lib/google-cloud-sdk:/usr/lib/google-cloud-sdk
+        - /usr/local/lib/android:/usr/local/lib/android
+        - /usr/share/dotnet:/usr/share/dotnet
+    steps:
+      - name: Free disk space
+        # Clean up the mapped volumes from host.
+        run: rm -rf /usr/lib/google-cloud-sdk/* /usr/local/lib/android/* /usr/share/dotnet/*
+      - uses: actions/checkout@v4
+      - run: df -alh
+
