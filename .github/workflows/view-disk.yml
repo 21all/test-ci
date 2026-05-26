@@ -4,19 +4,18 @@ on: [push]
 
 jobs:
   direct:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Default
+      labels: dev-runner
     steps:
       - uses: actions/checkout@v4
         with:
           repository: cqs21/asterinas
           ref: main
           fetch-depth: 1
-      - run: |
-          sudo cp -a /var/lib/docker /mnt
-          sudo mount --bind /mnt/docker /var/lib/docker
       - uses: kohlerdominik/docker-run-action@v2.0.0
         with:
-          image: asterinas/asterinas:0.17.0-20251217
+          image: asterinas/asterinas:0.17.2-20260407
           options: --privileged
           volumes: |
             ${{ github.workspace }}:/root/asterinas
